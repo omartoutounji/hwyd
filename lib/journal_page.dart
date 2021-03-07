@@ -5,7 +5,8 @@ class JournalPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -16,7 +17,7 @@ class JournalPage extends StatelessWidget {
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'how was your day?',
-                      hintStyle: TextStyle(fontSize: 30)
+                      hintStyle: TextStyle(fontSize: 40)
                   ),
                   showCursor: true,
                   style: TextStyle(fontSize: 90),
