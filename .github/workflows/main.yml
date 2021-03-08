@@ -29,5 +29,6 @@ jobs:
     - uses: subosito/flutter-action@v1
       with:
         flutter-version: '1.22.4'
+    - run: flutter clean
     - run: flutter pub get
     - run: flutter test
