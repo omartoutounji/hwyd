@@ -17,11 +17,6 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
-  fonts:
-    - family: Raleway
-      fonts:
-        - asset: fonts/Raleway-Extralight.ttf
-          weight: 200
   assets:
-  - assets/hwyd_logo.png
+    - assets/hwyd_logo.png
   uses-material-design: true
