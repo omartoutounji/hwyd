@@ -20,8 +20,3 @@ flutter:
   assets:
     - assets/hwyd_logo.png
   uses-material-design: true
-  fonts:
-    - family: Raleway
-      fonts:
-        - asset: fonts/Raleway-Extralight.ttf
-          weight: 200

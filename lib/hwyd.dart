@@ -7,12 +7,10 @@ class Hwyd extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         brightness: Brightness.light,
-        fontFamily: 'Raleway'
       ),
       darkTheme: ThemeData(
           brightness: Brightness.dark,
           scaffoldBackgroundColor: Colors.black,
-          fontFamily: 'Raleway'
       ),
       home: JournalPage(),
     );
