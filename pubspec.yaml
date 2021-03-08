@@ -17,6 +17,8 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  assets:
+    - assets/hwyd_logo.png
   uses-material-design: true
   fonts:
     - family: Raleway
