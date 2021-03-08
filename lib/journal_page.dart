@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class JournalPage extends StatelessWidget {
+  TextStyle getStyle(double size) {
+    return GoogleFonts.raleway(
+        textStyle: TextStyle(fontWeight: FontWeight.w200, fontSize: size)
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,11 +31,11 @@ class JournalPage extends StatelessWidget {
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'how was your day?',
-                        hintStyle: TextStyle(fontSize: 40)
+                        hintStyle: getStyle(30),
                     ),
                     showCursor: true,
                     cursorColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black,
-                    style: TextStyle(fontSize: 90),
+                    style: getStyle(80),
                     textAlign: TextAlign.center,
                   ),
                 )
