@@ -1,3 +1,3 @@
 # hwyd
 
-hwyd is a simple journaling app that asks only one question - how was your day? - and leaves the rest to you
+hwyd is the world's first privacy-based journal. So private, not even the app knows what you're typing 🤫
