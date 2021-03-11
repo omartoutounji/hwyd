@@ -8,7 +8,7 @@ void main() {
     await tester.pumpWidget(Hwyd());
 
     // Search for our hint text and verify there is one widget
-    expect(find.text('how was your day?'), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
 
     // Enter a mock journal
     await tester.enterText(find.byType(TextField), 'my day was great!');

@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import "dart:math";
 
 class JournalPage extends StatelessWidget {
   TextStyle getStyle(double size) {
     return GoogleFonts.raleway(
         textStyle: TextStyle(fontWeight: FontWeight.w200, fontSize: size)
     );
+  }
+
+  String getRandomGreeting() {
+    var greetings = ['how was your day?','what is going on?','what\'s up?',
+      'what\'s sizzling?','sup!','what\'s new?',
+      'how are you doing?', 'what\'s cracking?', 'life, huh?'];
+    final _random = new Random();
+    return greetings[_random.nextInt(greetings.length)];
   }
 
   @override
@@ -30,7 +39,7 @@ class JournalPage extends StatelessWidget {
                     maxLines: null,
                     decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'how was your day?',
+                        hintText: getRandomGreeting(),
                         hintStyle: getStyle(30),
                     ),
                     showCursor: true,
