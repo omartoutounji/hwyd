@@ -1,3 +1,3 @@
-# hwyd
+# yet
 
-hwyd is the world's first privacy-based journal. So private, not even the app knows what you're typing 🤫
+yet is the world's first nano journal. So tiny, it doesn’t even save. Yet so focused and beautiful, all you can do is write your best words.
