@@ -1,6 +1,6 @@
 # hwyd
 
-hwyd hwyd is the world's first nano journal.
+The world's first nano journal.
 Simple.
 Focused.
 Beautiful.
