@@ -2,7 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import "dart:math";
 
-class JournalPage extends StatelessWidget {
+class JournalPage extends StatefulWidget {
+  @override
+  _JournalPageState createState() => _JournalPageState();
+}
+
+class _JournalPageState extends State<JournalPage> {
+  String greeting;
+  final Image logo = Image.asset("assets/hwyd_logo.png", width: 50);
+
+  @override
+  void initState() {
+    super.initState();
+    greeting = getRandomGreeting();
+  }
+
   TextStyle getStyle(double size) {
     return GoogleFonts.raleway(
         textStyle: TextStyle(fontWeight: FontWeight.w200, fontSize: size)
@@ -30,7 +44,7 @@ class JournalPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset("assets/hwyd_logo.png", width: 50)
+                    logo
                   ],
                 ),
                 Expanded(
@@ -38,9 +52,9 @@ class JournalPage extends StatelessWidget {
                     keyboardType: TextInputType.text,
                     maxLines: null,
                     decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: getRandomGreeting(),
-                        hintStyle: getStyle(30),
+                      border: InputBorder.none,
+                      hintText: greeting,
+                      hintStyle: getStyle(30),
                     ),
                     showCursor: true,
                     cursorColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black,
