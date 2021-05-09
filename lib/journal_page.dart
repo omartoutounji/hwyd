@@ -112,9 +112,17 @@ class _JournalPageState extends State<JournalPage> {
                     style: getStyle(80),
                     textAlign: TextAlign.center,
                     onChanged: notes.length != 0 ? (text) {
-                      setState(() {
-                        notes[currentNoteIndex].text = text;
-                      });
+                      List<String> splittedString = text.split(" ");
+                      if (splittedString.length > 1) {
+                        setState(() {
+                          notes[currentNoteIndex].name = splittedString[0] + ' ' + splittedString[1];
+                          notes[currentNoteIndex].text = text;
+                        });
+                      } else {
+                        setState(() {
+                          notes[currentNoteIndex].text = text;
+                        });
+                      }
                       _save();
                     } : null,
                   ),
@@ -141,20 +149,26 @@ class _JournalPageState extends State<JournalPage> {
                   child: Text('Notes', style: GoogleFonts.raleway(
               textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 80, color: MediaQuery.of(context).platformBrightness != Brightness.dark ? Colors.white : Colors.black))),
               ),
-              ListView.builder(
-                  itemCount: notes.length,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      tileColor: currentNoteIndex == index ? Colors.grey : null,
-                      title: Text(notes[index].name, style: TextStyle(fontSize: 30, color: currentNoteIndex == index ? null : Colors.grey)),
-                      onTap: () {
-                        currentNoteIndex = index;
-                        textController.text = notes[currentNoteIndex].text;
-                        Navigator.pop(context);
-                      },
-              );})
+              SingleChildScrollView(
+                physics: ScrollPhysics(),
+                child: Column(
+                  children: [ListView.builder(
+                      itemCount: notes.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          tileColor: currentNoteIndex == index ? Colors.grey : null,
+                          title: Text(notes[index].name, style: TextStyle(fontSize: 30, color: currentNoteIndex == index ? null : Colors.grey)),
+                          onTap: () {
+                            currentNoteIndex = index;
+                            textController.text = notes[currentNoteIndex].text;
+                            Navigator.pop(context);
+                          },
+                  );})],
+                ),
+              )
             ],
           ),
         ),

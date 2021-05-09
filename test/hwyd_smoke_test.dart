@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hwyd/hwyd.dart';
+import 'package:hwyd/journal_page.dart';
 
 void main() {
   testWidgets('Hwyd smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(Hwyd());
+    // Take the JournalPage widget out of our app safely so we can test it without the onboarding page
+    Widget testWidget = new MediaQuery(
+        data: new MediaQueryData(),
+        child: new MaterialApp(home: JournalPage())
+    );
+
+    // Load the JournalPage widget
+    await tester.pumpWidget(testWidget);
 
     // Search for our hint text and verify there is one widget
     expect(find.byType(TextField), findsOneWidget);
