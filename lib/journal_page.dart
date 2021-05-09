@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import "dart:math";
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:math';
+import 'dart:convert';
+import 'package:date_format/date_format.dart';
+import 'Note.dart';
 
 class JournalPage extends StatefulWidget {
   @override
@@ -9,12 +13,48 @@ class JournalPage extends StatefulWidget {
 
 class _JournalPageState extends State<JournalPage> {
   String greeting;
-  final Image logo = Image.asset("assets/hwyd_logo.png", width: 50);
+  List<Note> notes = [];
+  int currentNoteIndex = 0;
+  final Image logo = Image.asset('assets/hwyd_logo.png', width: 50);
+  final textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _loadNotes();
     greeting = getRandomGreeting();
+  }
+
+  _loadNotes() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      notes = List<Note>.from(jsonDecode(prefs.getString('notes') ?? json.encode([Note(formatDate(DateTime.now(), [M, ' ', d, ' ', HH, ':', nn]), "")])).map((i) => Note.fromJson(i)));
+      currentNoteIndex = notes.length - 1;
+      textController.text = notes[currentNoteIndex].text;
+    });
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the widget tree.
+    // This also removes the _printLatestValue listener.
+    _save();
+    textController.dispose();
+    super.dispose();
+  }
+
+  _save() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('notes', json.encode(notes));
+  }
+
+  _addNote(Note note) async {
+    setState(() {
+      notes.add(note);
+      currentNoteIndex = notes.length - 1;
+      textController.text = notes[currentNoteIndex].text;
+    });
+    _save();
   }
 
   TextStyle getStyle(double size) {
@@ -44,12 +84,15 @@ class _JournalPageState extends State<JournalPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    logo
+                    GestureDetector(child: logo, onTap: (){
+                      _addNote(Note(formatDate(DateTime.now(), [M, ' ', d, ' ', HH, ':', nn]), ""));
+                    },)
                   ],
                 ),
                 Expanded(
                   child: TextField(
                     keyboardType: TextInputType.text,
+                    controller: textController,
                     maxLines: null,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -60,10 +103,79 @@ class _JournalPageState extends State<JournalPage> {
                     cursorColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black,
                     style: getStyle(80),
                     textAlign: TextAlign.center,
+                    onChanged: (text) {
+                      setState(() {
+                        notes[currentNoteIndex].text = text;
+                      });
+                      _save();
+                    },
                   ),
                 )
               ],
             ),
+          ),
+        ),
+      ),
+      drawer: Theme(
+        data: Theme.of(context).copyWith(
+          // Set the transparency here
+          canvasColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black, //or any other color you want. e.g Colors.blue.withOpacity(0.5)
+        ),
+        child: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.only(top: 50),
+            children: <Widget>[
+              DrawerHeader(
+                  child: Text('Notes', style: GoogleFonts.raleway(
+              textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 80, color: MediaQuery.of(context).platformBrightness != Brightness.dark ? Colors.white : Colors.black))),
+              ),
+              ListView.builder(
+                  itemCount: notes.length,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {return ListTile(
+                    tileColor: currentNoteIndex == index ? Colors.grey : null,
+                title: Text(notes[index].name, style: TextStyle(fontSize: 30, color: currentNoteIndex == index ? null : Colors.grey)),
+                onTap: () {
+                  currentNoteIndex = index;
+                  textController.text = notes[currentNoteIndex].text;
+                  Navigator.pop(context);
+                },
+              );})
+              // ListTile(
+              //   title: Text('today', style: TextStyle(fontSize: 30),),
+              //   tileColor: Colors.grey,
+              //   onTap: () {
+              //     // Update the state of the app.
+              //     // ...
+              //   },
+              // ),
+              // ListTile(
+              //   title: Text('yesterday', style: TextStyle(fontSize: 30, color: Colors.grey),),
+              //   onTap: () {
+              //     // Update the state of the app.
+              //     // ...
+              //   },
+              // ),
+              // ListTile(
+              //   title: Text('may 5', style: TextStyle(fontSize: 30, color: Colors.grey),),
+              //   onTap: () {
+              //     // Update the state of the app.
+              //     // ...
+              //   },
+              // ),
+              // ListTile(
+              //   title: Text('may 4', style: TextStyle(fontSize: 30, color: Colors.grey),),
+              //   onTap: () {
+              //     // Update the state of the app.
+              //     // ...
+              //   },
+              // ),
+            ],
           ),
         ),
       ),
