@@ -25,10 +25,18 @@ class _JournalPageState extends State<JournalPage> {
     greeting = getRandomGreeting();
   }
 
+  Note getNewNote() {
+    return Note(getPrettyDate(), "");
+  }
+
+  String getPrettyDate() {
+    return formatDate(DateTime.now(), [M, ' ', d, ' at ', HH, ':', nn]);
+  }
+
   _loadNotes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      notes = List<Note>.from(jsonDecode(prefs.getString('notes') ?? json.encode([Note(formatDate(DateTime.now(), [M, ' ', d, ' ', HH, ':', nn]), "")])).map((i) => Note.fromJson(i)));
+      notes = List<Note>.from(jsonDecode(prefs.getString('notes') ?? json.encode([getNewNote()])).map((i) => Note.fromJson(i)));
       currentNoteIndex = notes.length - 1;
       textController.text = notes[currentNoteIndex].text;
     });
@@ -48,9 +56,9 @@ class _JournalPageState extends State<JournalPage> {
     prefs.setString('notes', json.encode(notes));
   }
 
-  _addNote(Note note) async {
+  _createNewNote() async {
     setState(() {
-      notes.add(note);
+      notes.add(getNewNote());
       currentNoteIndex = notes.length - 1;
       textController.text = notes[currentNoteIndex].text;
     });
@@ -85,7 +93,7 @@ class _JournalPageState extends State<JournalPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(child: logo, onTap: (){
-                      _addNote(Note(formatDate(DateTime.now(), [M, ' ', d, ' ', HH, ':', nn]), ""));
+                      _createNewNote();
                     },)
                   ],
                 ),
@@ -103,12 +111,12 @@ class _JournalPageState extends State<JournalPage> {
                     cursorColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black,
                     style: getStyle(80),
                     textAlign: TextAlign.center,
-                    onChanged: (text) {
+                    onChanged: notes.length != 0 ? (text) {
                       setState(() {
                         notes[currentNoteIndex].text = text;
                       });
                       _save();
-                    },
+                    } : null,
                   ),
                 )
               ],
@@ -137,44 +145,16 @@ class _JournalPageState extends State<JournalPage> {
                   itemCount: notes.length,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemBuilder: (context, index) {return ListTile(
-                    tileColor: currentNoteIndex == index ? Colors.grey : null,
-                title: Text(notes[index].name, style: TextStyle(fontSize: 30, color: currentNoteIndex == index ? null : Colors.grey)),
-                onTap: () {
-                  currentNoteIndex = index;
-                  textController.text = notes[currentNoteIndex].text;
-                  Navigator.pop(context);
-                },
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      tileColor: currentNoteIndex == index ? Colors.grey : null,
+                      title: Text(notes[index].name, style: TextStyle(fontSize: 30, color: currentNoteIndex == index ? null : Colors.grey)),
+                      onTap: () {
+                        currentNoteIndex = index;
+                        textController.text = notes[currentNoteIndex].text;
+                        Navigator.pop(context);
+                      },
               );})
-              // ListTile(
-              //   title: Text('today', style: TextStyle(fontSize: 30),),
-              //   tileColor: Colors.grey,
-              //   onTap: () {
-              //     // Update the state of the app.
-              //     // ...
-              //   },
-              // ),
-              // ListTile(
-              //   title: Text('yesterday', style: TextStyle(fontSize: 30, color: Colors.grey),),
-              //   onTap: () {
-              //     // Update the state of the app.
-              //     // ...
-              //   },
-              // ),
-              // ListTile(
-              //   title: Text('may 5', style: TextStyle(fontSize: 30, color: Colors.grey),),
-              //   onTap: () {
-              //     // Update the state of the app.
-              //     // ...
-              //   },
-              // ),
-              // ListTile(
-              //   title: Text('may 4', style: TextStyle(fontSize: 30, color: Colors.grey),),
-              //   onTap: () {
-              //     // Update the state of the app.
-              //     // ...
-              //   },
-              // ),
             ],
           ),
         ),
