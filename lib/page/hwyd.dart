@@ -57,7 +57,7 @@ class _HwydState extends State<Hwyd> {
           )],
           onDone: () {
             _disableOnboard();
-            Navigator.pushReplacementNamed(context, '/j');
+            Navigator.pushReplacementNamed(context, '/journal');
           },
           showSkipButton: false,
           next: const Icon(Icons.navigate_next),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hwyd/hwyd.dart';
-import 'package:hwyd/journal_page.dart';
+import 'package:hwyd/page/hwyd.dart';
+import 'package:hwyd/page/journal_page.dart';
 
 void main() {
   testWidgets('Hwyd smoke test', (WidgetTester tester) async {

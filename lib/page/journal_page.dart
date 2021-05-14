@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 import 'dart:convert';
 import 'package:date_format/date_format.dart';
-import 'Note.dart';
+import '../model/Note.dart';
 
 class JournalPage extends StatefulWidget {
   @override
