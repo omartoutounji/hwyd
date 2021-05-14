@@ -14,6 +14,7 @@ class Hwyd extends StatefulWidget {
 }
 
 class _HwydState extends State<Hwyd> {
+  static const String _onBoardKey = 'onboard';
   bool showOnboard;
 
   @override
@@ -25,13 +26,13 @@ class _HwydState extends State<Hwyd> {
   _checkOnboardStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      showOnboard = jsonDecode(prefs.getString('onboard') ?? json.encode(true));
+      showOnboard = jsonDecode(prefs.getString(_onBoardKey) ?? json.encode(true));
     });
   }
 
   _disableOnboard() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('onboard', json.encode(false));
+    prefs.setString(_onBoardKey, json.encode(false));
   }
 
   @override
