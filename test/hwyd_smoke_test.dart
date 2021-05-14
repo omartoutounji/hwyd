@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hwyd/page/hwyd.dart';
 import 'package:hwyd/page/journal_page.dart';
 
 void main() {
