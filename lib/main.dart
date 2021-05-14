@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hwyd/routes/hwyd_routes.dart';
 
-import 'page/hwyd.dart';
+import 'screens/hwyd.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
