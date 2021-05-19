@@ -1,10 +1,12 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:math';
-import 'dart:convert';
-import 'package:date_format/date_format.dart';
-import 'Note.dart';
+
+import '../model/Note.dart';
 
 class JournalPage extends StatefulWidget {
   @override
