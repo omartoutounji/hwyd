@@ -60,6 +60,12 @@ class _HwydState extends State<Hwyd> {
         image: Center(
           child: Icon(Icons.swipe, size: 250),
         ),
+      ), PageViewModel(
+        title: "Changing font size",
+        body: "Swipe the other way around from right to left and move the slider to change font size",
+        image: Center(
+          child: Icon(Icons.format_size, size: 250),
+        ),
       )],
       onDone: () {
         _disableOnboard();

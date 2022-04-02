@@ -19,6 +19,7 @@ class _JournalPageState extends State<JournalPage> {
   int currentNoteIndex = 0;
   final Image logo = Image.asset('assets/hwyd_logo.png', width: 50);
   final textController = TextEditingController();
+  double _currentSliderValue = 80;
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _JournalPageState extends State<JournalPage> {
       notes = List<Note>.from(jsonDecode(prefs.getString('notes') ?? json.encode([getNewNote()])).map((i) => Note.fromJson(i)));
       currentNoteIndex = notes.length - 1;
       textController.text = notes[currentNoteIndex].text;
+      _currentSliderValue = prefs.getDouble('fontSize') ?? 80;
     });
   }
 
@@ -56,6 +58,7 @@ class _JournalPageState extends State<JournalPage> {
   _save() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('notes', json.encode(notes));
+    prefs.setDouble('fontSize', _currentSliderValue);
   }
 
   _createNewNote() async {
@@ -79,6 +82,19 @@ class _JournalPageState extends State<JournalPage> {
       'how are you doing?', 'what\'s cracking?', 'life, huh?'];
     final _random = new Random();
     return greetings[_random.nextInt(greetings.length)];
+  }
+
+  String getSliderLabel() {
+    if (_currentSliderValue == 20.0)
+      return "S";
+    else if (_currentSliderValue == 35.0)
+      return "M";
+    else if (_currentSliderValue == 50.0)
+      return "L";
+    else if (_currentSliderValue == 65.0)
+      return "XL";
+    else
+      return "XXL";
   }
 
   @override
@@ -111,7 +127,7 @@ class _JournalPageState extends State<JournalPage> {
                     ),
                     showCursor: true,
                     cursorColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black,
-                    style: getStyle(80),
+                    style: getStyle(_currentSliderValue),
                     textAlign: TextAlign.center,
                     onChanged: notes.length != 0 ? (text) {
                       List<String> splittedString = text.split(" ");
@@ -170,6 +186,39 @@ class _JournalPageState extends State<JournalPage> {
                           },
                   );})],
                 ),
+              )
+            ],
+          ),
+        ),
+      ),
+      endDrawer: Theme(
+        data: Theme.of(context).copyWith(
+          // Set the transparency here
+          canvasColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black, //or any other color you want. e.g Colors.blue.withOpacity(0.5)
+        ),
+        child: Drawer(
+          // Add a ListView to the drawer. This ensures the user can scroll
+          // through the options in the drawer if there isn't enough vertical
+          // space to fit everything.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.only(top: 50),
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('Font', style: GoogleFonts.raleway(
+                    textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 80, color: MediaQuery.of(context).platformBrightness != Brightness.dark ? Colors.white : Colors.black))),
+              ), Slider(
+                value: _currentSliderValue,
+                max: 80,
+                min: 20,
+                divisions: 4,
+                label: getSliderLabel(),
+                onChanged: (double value) {
+                  setState(() {
+                    _currentSliderValue = value;
+                    _save();
+                  });
+                },
               )
             ],
           ),
