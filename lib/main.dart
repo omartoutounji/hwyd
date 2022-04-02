@@ -6,7 +6,7 @@ import 'screens/hwyd.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     routes: routes,
