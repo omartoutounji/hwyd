@@ -32,5 +32,5 @@ jobs:
     - run: flutter upgrade
     - run: flutter clean
     - run: flutter pub get
-    - run: flutter analyze
-    - run: flutter test --ignore-deprecation
+    - run: flutter analyze --ignore-deprecation
+    - run: flutter test
