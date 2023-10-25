@@ -1,24 +1,25 @@
 name: hwyd
 description: hwyd is the world's first nano journal. Simple. Focused. Beautiful. All you'll want to do is write your heart out.
 publish_to: 'none'
-
 version: 1.4.0+4
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=3.1.4 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.0
-  google_fonts: ^2.0.0
+  google_fonts: ^6.1.0
   shared_preferences: ^2.0.5
   date_format: ^2.0.2
-  introduction_screen: ^2.1.0
+  introduction_screen: ^3.1.12
+  file: ^6.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^2.0.0
 
 flutter:
   assets:

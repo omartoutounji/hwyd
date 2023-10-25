@@ -14,7 +14,7 @@ class JournalPage extends StatefulWidget {
 }
 
 class _JournalPageState extends State<JournalPage> {
-  String greeting;
+  String greeting = "";
   List<Note> notes = [];
   int currentNoteIndex = 0;
   final Image logo = Image.asset('assets/hwyd_logo.png', width: 50);
@@ -39,7 +39,9 @@ class _JournalPageState extends State<JournalPage> {
   _loadNotes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      notes = List<Note>.from(jsonDecode(prefs.getString('notes') ?? json.encode([getNewNote()])).map((i) => Note.fromJson(i)));
+      notes = List<Note>.from(
+          jsonDecode(prefs.getString('notes') ?? json.encode([getNewNote()]))
+              .map((i) => Note.fromJson(i)));
       currentNoteIndex = notes.length - 1;
       textController.text = notes[currentNoteIndex].text;
       _currentSliderValue = prefs.getDouble('fontSize') ?? 80;
@@ -72,14 +74,21 @@ class _JournalPageState extends State<JournalPage> {
 
   TextStyle getStyle(double size) {
     return GoogleFonts.raleway(
-        textStyle: TextStyle(fontWeight: FontWeight.w200, fontSize: size)
-    );
+        textStyle: TextStyle(fontWeight: FontWeight.w200, fontSize: size));
   }
 
   String getRandomGreeting() {
-    var greetings = ['how was your day?','what is going on?','what\'s up?',
-      'what\'s sizzling?','sup!','what\'s new?',
-      'how are you doing?', 'what\'s cracking?', 'life, huh?'];
+    var greetings = [
+      'how was your day?',
+      'what is going on?',
+      'what\'s up?',
+      'what\'s sizzling?',
+      'sup!',
+      'what\'s new?',
+      'how are you doing?',
+      'what\'s cracking?',
+      'life, huh?'
+    ];
     final _random = new Random();
     return greetings[_random.nextInt(greetings.length)];
   }
@@ -110,9 +119,12 @@ class _JournalPageState extends State<JournalPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(child: logo, onTap: (){
-                      _createNewNote();
-                    },)
+                    GestureDetector(
+                      child: logo,
+                      onTap: () {
+                        _createNewNote();
+                      },
+                    )
                   ],
                 ),
                 Expanded(
@@ -126,23 +138,29 @@ class _JournalPageState extends State<JournalPage> {
                       hintStyle: getStyle(30),
                     ),
                     showCursor: true,
-                    cursorColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black,
+                    cursorColor: MediaQuery.of(context).platformBrightness ==
+                            Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
                     style: getStyle(_currentSliderValue),
                     textAlign: TextAlign.center,
-                    onChanged: notes.length != 0 ? (text) {
-                      List<String> splittedString = text.split(" ");
-                      if (splittedString.length > 1) {
-                        setState(() {
-                          notes[currentNoteIndex].name = splittedString[0] + ' ' + splittedString[1];
-                          notes[currentNoteIndex].text = text;
-                        });
-                      } else {
-                        setState(() {
-                          notes[currentNoteIndex].text = text;
-                        });
-                      }
-                      _save();
-                    } : null,
+                    onChanged: notes.length != 0
+                        ? (text) {
+                            List<String> splittedString = text.split(" ");
+                            if (splittedString.length > 1) {
+                              setState(() {
+                                notes[currentNoteIndex].name =
+                                    splittedString[0] + ' ' + splittedString[1];
+                                notes[currentNoteIndex].text = text;
+                              });
+                            } else {
+                              setState(() {
+                                notes[currentNoteIndex].text = text;
+                              });
+                            }
+                            _save();
+                          }
+                        : null,
                   ),
                 )
               ],
@@ -153,7 +171,11 @@ class _JournalPageState extends State<JournalPage> {
       drawer: Theme(
         data: Theme.of(context).copyWith(
           // Set the transparency here
-          canvasColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black, //or any other color you want. e.g Colors.blue.withOpacity(0.5)
+          canvasColor: MediaQuery.of(context).platformBrightness ==
+                  Brightness.dark
+              ? Colors.white
+              : Colors
+                  .black, //or any other color you want. e.g Colors.blue.withOpacity(0.5)
         ),
         child: Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
@@ -164,27 +186,44 @@ class _JournalPageState extends State<JournalPage> {
             padding: EdgeInsets.only(top: 50),
             children: <Widget>[
               DrawerHeader(
-                  child: Text('Notes', style: GoogleFonts.raleway(
-              textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 80, color: MediaQuery.of(context).platformBrightness != Brightness.dark ? Colors.white : Colors.black))),
+                child: Text('Notes',
+                    style: GoogleFonts.raleway(
+                        textStyle: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 80,
+                            color: MediaQuery.of(context).platformBrightness !=
+                                    Brightness.dark
+                                ? Colors.white
+                                : Colors.black))),
               ),
               SingleChildScrollView(
                 physics: ScrollPhysics(),
                 child: Column(
-                  children: [ListView.builder(
-                      itemCount: notes.length,
-                      physics: NeverScrollableScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          tileColor: currentNoteIndex == index ? Colors.grey : null,
-                          title: Text(notes[index].name, style: TextStyle(fontSize: 30, color: currentNoteIndex == index ? null : Colors.grey)),
-                          onTap: () {
-                            currentNoteIndex = index;
-                            textController.text = notes[currentNoteIndex].text;
-                            Navigator.pop(context);
-                          },
-                  );})],
+                  children: [
+                    ListView.builder(
+                        itemCount: notes.length,
+                        physics: NeverScrollableScrollPhysics(),
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            tileColor:
+                                currentNoteIndex == index ? Colors.grey : null,
+                            title: Text(notes[index].name,
+                                style: TextStyle(
+                                    fontSize: 30,
+                                    color: currentNoteIndex == index
+                                        ? null
+                                        : Colors.grey)),
+                            onTap: () {
+                              currentNoteIndex = index;
+                              textController.text =
+                                  notes[currentNoteIndex].text;
+                              Navigator.pop(context);
+                            },
+                          );
+                        })
+                  ],
                 ),
               )
             ],
@@ -194,7 +233,11 @@ class _JournalPageState extends State<JournalPage> {
       endDrawer: Theme(
         data: Theme.of(context).copyWith(
           // Set the transparency here
-          canvasColor: MediaQuery.of(context).platformBrightness == Brightness.dark ? Colors.white : Colors.black, //or any other color you want. e.g Colors.blue.withOpacity(0.5)
+          canvasColor: MediaQuery.of(context).platformBrightness ==
+                  Brightness.dark
+              ? Colors.white
+              : Colors
+                  .black, //or any other color you want. e.g Colors.blue.withOpacity(0.5)
         ),
         child: Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
@@ -205,9 +248,17 @@ class _JournalPageState extends State<JournalPage> {
             padding: EdgeInsets.only(top: 50),
             children: <Widget>[
               DrawerHeader(
-                child: Text('Font', style: GoogleFonts.raleway(
-                    textStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 80, color: MediaQuery.of(context).platformBrightness != Brightness.dark ? Colors.white : Colors.black))),
-              ), Slider(
+                child: Text('Font',
+                    style: GoogleFonts.raleway(
+                        textStyle: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 80,
+                            color: MediaQuery.of(context).platformBrightness !=
+                                    Brightness.dark
+                                ? Colors.white
+                                : Colors.black))),
+              ),
+              Slider(
                 value: _currentSliderValue,
                 max: 80,
                 min: 20,
