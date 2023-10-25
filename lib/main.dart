@@ -17,6 +17,6 @@ void main() {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: Colors.black,
     ),
-    home: Hwyd(),
+    home: const Hwyd(),
   ));
 }

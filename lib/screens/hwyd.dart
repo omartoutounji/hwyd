@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'journal_page.dart';
 
 class Hwyd extends StatefulWidget {
-  const Hwyd({Key key}) : super(key: key);
+  const Hwyd({Key? key}) : super(key: key);
 
   @override
   _HwydState createState() => _HwydState();
@@ -15,7 +15,7 @@ class Hwyd extends StatefulWidget {
 
 class _HwydState extends State<Hwyd> {
   static const String _onBoardKey = 'onboard';
-  bool showOnboard;
+  bool showOnboard = true;
 
   @override
   void initState() {
@@ -26,7 +26,8 @@ class _HwydState extends State<Hwyd> {
   _checkOnboardStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      showOnboard = jsonDecode(prefs.getString(_onBoardKey) ?? json.encode(true));
+      showOnboard =
+          jsonDecode(prefs.getString(_onBoardKey) ?? json.encode(true));
     });
   }
 
@@ -42,31 +43,42 @@ class _HwydState extends State<Hwyd> {
 
   Widget _buildIntroductionScreen() {
     return IntroductionScreen(
-      pages: [PageViewModel(
-        title: "hwyd",
-        body: "Welcome to the world's first nano journal. So simple, all you'll want to do is write your heart out ♥️",
-        image: Center(
-          child: Image.asset('assets/hwyd_logo.png', width: 250),
+      pages: [
+        PageViewModel(
+          title: "hwyd",
+          body:
+              "Welcome to the world's first nano journal. So simple, all you'll want to do is write your heart out ♥️",
+          image: Center(
+            child: Image.asset('assets/hwyd_logo.png', width: 250),
+          ),
         ),
-      ), PageViewModel(
-        title: "Creating a new note",
-        body: "Just tap the hwyd logo to create a new note️",
-        image: Center(
-          child: Icon(Icons.add, size: 250,),
+        PageViewModel(
+          title: "Creating a new note",
+          body: "Just tap the hwyd logo to create a new note️",
+          image: Center(
+            child: Icon(
+              Icons.add,
+              size: 250,
+            ),
+          ),
         ),
-      ), PageViewModel(
-        title: "Viewing previous notes",
-        body: "Swipe from left to right to see other notes. Don't worry about saving, everything auto-saves. Also don't worry about privacy, contents are only saved on your device so no one can access it but you. Not even hwyd.",
-        image: Center(
-          child: Icon(Icons.swipe, size: 250),
+        PageViewModel(
+          title: "Viewing previous notes",
+          body:
+              "Swipe from left to right to see other notes. Don't worry about saving, everything auto-saves. Also don't worry about privacy, contents are only saved on your device so no one can access it but you. Not even hwyd.",
+          image: Center(
+            child: Icon(Icons.swipe, size: 250),
+          ),
         ),
-      ), PageViewModel(
-        title: "Changing font size",
-        body: "Swipe the other way around from right to left and move the slider to change font size",
-        image: Center(
-          child: Icon(Icons.format_size, size: 250),
-        ),
-      )],
+        PageViewModel(
+          title: "Changing font size",
+          body:
+              "Swipe the other way around from right to left and move the slider to change font size",
+          image: Center(
+            child: Icon(Icons.format_size, size: 250),
+          ),
+        )
+      ],
       onDone: () {
         _disableOnboard();
         Navigator.pushReplacementNamed(context, '/journal');
