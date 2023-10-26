@@ -112,16 +112,21 @@ class _JournalPageState extends State<JournalPage> {
   }
 
   String getSliderLabel() {
+    String letter = "";
+
     if (_currentSliderValue == 20.0) {
-      return "S";
-    } else if (_currentSliderValue == 35.0)
-      return "M";
-    else if (_currentSliderValue == 50.0)
-      return "L";
-    else if (_currentSliderValue == 65.0)
-      return "XL";
-    else
-      return "XXL";
+      letter = "S";
+    } else if (_currentSliderValue == 35.0) {
+      letter = "M";
+    } else if (_currentSliderValue == 50.0) {
+      letter = "L";
+    } else if (_currentSliderValue == 65.0) {
+      letter = "XL";
+    } else {
+      letter = "XXL";
+    }
+
+    return letter;
   }
 
   @override
@@ -267,7 +272,7 @@ class _JournalPageState extends State<JournalPage> {
                         itemBuilder: (context, index) {
                           final currentNote = notes[index];
                           return Dismissible(
-                            key: Key(currentNote.name),
+                            key: UniqueKey(),
                             background: Container(color: Colors.red),
                             onDismissed: (direction) {
                               // Remove the item from the data source.
