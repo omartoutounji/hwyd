@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/Note.dart';
 
 class JournalPage extends StatefulWidget {
+  const JournalPage({super.key});
+
   @override
   _JournalPageState createState() => _JournalPageState();
 }
@@ -20,11 +22,15 @@ class _JournalPageState extends State<JournalPage> {
   final Image logo = Image.asset('assets/hwyd_logo.png', width: 50);
   final textController = TextEditingController();
   double _currentSliderValue = 80;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     _loadNotes();
+    if (notes.isEmpty) {
+      _createNewNote();
+    }
     greeting = getRandomGreeting();
   }
 
@@ -72,6 +78,18 @@ class _JournalPageState extends State<JournalPage> {
     _save();
   }
 
+  _deleteNote(index) async {
+    setState(() {
+      notes.removeAt(index);
+      if (notes.isEmpty) {
+        _createNewNote();
+      }
+      currentNoteIndex = notes.length - 1;
+      textController.text = notes[currentNoteIndex].text;
+    });
+    _save();
+  }
+
   TextStyle getStyle(double size) {
     return GoogleFonts.raleway(
         textStyle: TextStyle(fontWeight: FontWeight.w200, fontSize: size));
@@ -89,14 +107,14 @@ class _JournalPageState extends State<JournalPage> {
       'what\'s cracking?',
       'life, huh?'
     ];
-    final _random = new Random();
-    return greetings[_random.nextInt(greetings.length)];
+    final random = Random();
+    return greetings[random.nextInt(greetings.length)];
   }
 
   String getSliderLabel() {
-    if (_currentSliderValue == 20.0)
+    if (_currentSliderValue == 20.0) {
       return "S";
-    else if (_currentSliderValue == 35.0)
+    } else if (_currentSliderValue == 35.0)
       return "M";
     else if (_currentSliderValue == 50.0)
       return "L";
@@ -109,62 +127,103 @@ class _JournalPageState extends State<JournalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: SafeArea(
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      child: logo,
-                      onTap: () {
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: IconButton(
+                        onPressed: () =>
+                            _scaffoldKey.currentState!.openDrawer(),
+                        icon: const Icon(Icons.menu)),
+                  ),
+                  Expanded(
+                    child: Text(
+                      notes[currentNoteIndex].name,
+                      style: getStyle(30),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                        onPressed: () =>
+                            _scaffoldKey.currentState!.openEndDrawer(),
+                        icon: const Icon(Icons.settings)),
+                  )
+                ],
+              ),
+              Expanded(
+                child: TextField(
+                  keyboardType: TextInputType.text,
+                  controller: textController,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: greeting,
+                    hintStyle: getStyle(30),
+                  ),
+                  showCursor: true,
+                  cursorColor: MediaQuery.of(context).platformBrightness ==
+                          Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                  style: getStyle(_currentSliderValue),
+                  textAlign: TextAlign.center,
+                  onChanged: notes.isNotEmpty
+                      ? (text) {
+                          List<String> splittedString = text.split(" ");
+                          if (splittedString.length > 1) {
+                            setState(() {
+                              notes[currentNoteIndex].name =
+                                  '${splittedString[0]} ${splittedString[1]}';
+                              notes[currentNoteIndex].text = text;
+                            });
+                          } else {
+                            setState(() {
+                              notes[currentNoteIndex].text = text;
+                            });
+                          }
+                          _save();
+                        }
+                      : null,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: ElevatedButton(
+                      onPressed: () {
                         _createNewNote();
                       },
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: TextField(
-                    keyboardType: TextInputType.text,
-                    controller: textController,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: greeting,
-                      hintStyle: getStyle(30),
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(10),
+                        backgroundColor:
+                            MediaQuery.of(context).platformBrightness ==
+                                    Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
+                      ),
+                      child: Icon(
+                        Icons.add,
+                        size: 40,
+                        color: MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? Colors.black
+                            : Colors.white,
+                      ),
                     ),
-                    showCursor: true,
-                    cursorColor: MediaQuery.of(context).platformBrightness ==
-                            Brightness.dark
-                        ? Colors.white
-                        : Colors.black,
-                    style: getStyle(_currentSliderValue),
-                    textAlign: TextAlign.center,
-                    onChanged: notes.length != 0
-                        ? (text) {
-                            List<String> splittedString = text.split(" ");
-                            if (splittedString.length > 1) {
-                              setState(() {
-                                notes[currentNoteIndex].name =
-                                    splittedString[0] + ' ' + splittedString[1];
-                                notes[currentNoteIndex].text = text;
-                              });
-                            } else {
-                              setState(() {
-                                notes[currentNoteIndex].text = text;
-                              });
-                            }
-                            _save();
-                          }
-                        : null,
                   ),
-                )
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -183,44 +242,63 @@ class _JournalPageState extends State<JournalPage> {
           // space to fit everything.
           child: ListView(
             // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.only(top: 50),
+            padding: const EdgeInsets.only(top: 50),
             children: <Widget>[
               DrawerHeader(
                 child: Text('Notes',
                     style: GoogleFonts.raleway(
                         textStyle: TextStyle(
                             fontWeight: FontWeight.w400,
-                            fontSize: 80,
+                            fontSize: 60,
                             color: MediaQuery.of(context).platformBrightness !=
                                     Brightness.dark
                                 ? Colors.white
                                 : Colors.black))),
               ),
               SingleChildScrollView(
-                physics: ScrollPhysics(),
+                physics: const ScrollPhysics(),
                 child: Column(
                   children: [
                     ListView.builder(
                         itemCount: notes.length,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            tileColor:
-                                currentNoteIndex == index ? Colors.grey : null,
-                            title: Text(notes[index].name,
-                                style: TextStyle(
-                                    fontSize: 30,
-                                    color: currentNoteIndex == index
-                                        ? null
-                                        : Colors.grey)),
-                            onTap: () {
-                              currentNoteIndex = index;
-                              textController.text =
-                                  notes[currentNoteIndex].text;
-                              Navigator.pop(context);
+                          final currentNote = notes[index];
+                          return Dismissible(
+                            key: Key(currentNote.name),
+                            background: Container(color: Colors.red),
+                            onDismissed: (direction) {
+                              // Remove the item from the data source.
+                              setState(() {
+                                _deleteNote(index);
+                              });
+
+                              // Then show a snackbar.
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Note dismissed')));
                             },
+                            child: ListTile(
+                              tileColor: currentNoteIndex == index
+                                  ? Colors.grey
+                                  : null,
+                              title: Text(currentNote.name,
+                                  style: TextStyle(
+                                      fontSize: 30,
+                                      color: currentNoteIndex == index
+                                          ? null
+                                          : Colors.grey)),
+                              onTap: () {
+                                setState(() {
+                                  currentNoteIndex = index;
+                                });
+                                textController.text =
+                                    notes[currentNoteIndex].text;
+                                Navigator.pop(context);
+                              },
+                            ),
                           );
                         })
                   ],
@@ -245,14 +323,14 @@ class _JournalPageState extends State<JournalPage> {
           // space to fit everything.
           child: ListView(
             // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.only(top: 50),
+            padding: const EdgeInsets.only(top: 50),
             children: <Widget>[
               DrawerHeader(
-                child: Text('Font',
+                child: Text('Font Size',
                     style: GoogleFonts.raleway(
                         textStyle: TextStyle(
                             fontWeight: FontWeight.w400,
-                            fontSize: 80,
+                            fontSize: 60,
                             color: MediaQuery.of(context).platformBrightness !=
                                     Brightness.dark
                                 ? Colors.white

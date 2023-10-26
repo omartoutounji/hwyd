@@ -38,7 +38,7 @@ class _HwydState extends State<Hwyd> {
 
   @override
   Widget build(BuildContext context) {
-    return showOnboard == true ? _buildIntroductionScreen() : JournalPage();
+    return showOnboard == true ? _buildIntroductionScreen() : const JournalPage();
   }
 
   Widget _buildIntroductionScreen() {
@@ -55,7 +55,7 @@ class _HwydState extends State<Hwyd> {
         PageViewModel(
           title: "Creating a new note",
           body: "Just tap the hwyd logo to create a new note️",
-          image: Center(
+          image: const Center(
             child: Icon(
               Icons.add,
               size: 250,
@@ -66,7 +66,7 @@ class _HwydState extends State<Hwyd> {
           title: "Viewing previous notes",
           body:
               "Swipe from left to right to see other notes. Don't worry about saving, everything auto-saves. Also don't worry about privacy, contents are only saved on your device so no one can access it but you. Not even hwyd.",
-          image: Center(
+          image: const Center(
             child: Icon(Icons.swipe, size: 250),
           ),
         ),
@@ -74,7 +74,7 @@ class _HwydState extends State<Hwyd> {
           title: "Changing font size",
           body:
               "Swipe the other way around from right to left and move the slider to change font size",
-          image: Center(
+          image: const Center(
             child: Icon(Icons.format_size, size: 250),
           ),
         )
