@@ -5,9 +5,9 @@ import 'package:hwyd/screens/journal_page.dart';
 void main() {
   testWidgets('Hwyd smoke test', (WidgetTester tester) async {
     // Take the JournalPage widget out of our app safely so we can test it without the onboarding page
-    Widget testWidget = new MediaQuery(
-        data: new MediaQueryData(),
-        child: new MaterialApp(home: JournalPage())
+    Widget testWidget = const MediaQuery(
+        data: MediaQueryData(),
+        child: MaterialApp(home: JournalPage())
     );
 
     // Load the JournalPage widget
