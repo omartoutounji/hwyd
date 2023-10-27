@@ -10,9 +10,7 @@ void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     routes: routes,
-    theme: ThemeData(
-      brightness: Brightness.light,
-    ),
+    theme: ThemeData(brightness: Brightness.light),
     darkTheme: ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: Colors.black,

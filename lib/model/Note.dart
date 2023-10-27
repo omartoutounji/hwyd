@@ -1,18 +1,17 @@
+// ignore_for_file: file_names
+
 class Note {
   String name;
   String text;
 
   Note(this.name, this.text);
 
-  factory Note.fromJson(Map<String, dynamic> parsedJson){
-    return Note(
-      parsedJson['name'],
-      parsedJson['text'],
-    );
+  factory Note.fromJson(Map<String, dynamic> parsedJson) {
+    return Note(parsedJson['name'], parsedJson['text']);
   }
 
   Map<String, dynamic> toJson() => {
-    'name': name,
-    'text': text,
-  };
+        'name': name,
+        'text': text,
+      };
 }

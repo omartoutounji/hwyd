@@ -1,10 +1,15 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 import 'dart:math';
 
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../model/Note.dart';
 
@@ -21,8 +26,10 @@ class _JournalPageState extends State<JournalPage> {
   int currentNoteIndex = 0;
   final Image logo = Image.asset('assets/hwyd_logo.png', width: 50);
   final textController = TextEditingController();
+  final renameController = TextEditingController();
   double _currentSliderValue = 80;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isRenameTextFieldEnabled = false;
 
   @override
   void initState() {
@@ -39,7 +46,16 @@ class _JournalPageState extends State<JournalPage> {
   }
 
   String getPrettyDate() {
-    return formatDate(DateTime.now(), [M, ' ', d, ' at ', HH, ':', nn]);
+    return formatDate(
+        DateTime.now(), [M, ' ', d, ' at ', HH, ':', nn, '.', ss]);
+  }
+
+  Future<void> _launchPrivacyPolicyUrl() async {
+    Uri privacyPolicyUrl = Uri.parse(
+        'https://github.com/omartoutounji/hwyd/tree/master/privacy-policy/hwyd-app-privacy-policy.pdf');
+    if (!await launchUrl(privacyPolicyUrl)) {
+      throw Exception('Could not launch $privacyPolicyUrl');
+    }
   }
 
   _loadNotes() async {
@@ -60,6 +76,7 @@ class _JournalPageState extends State<JournalPage> {
     // This also removes the _printLatestValue listener.
     _save();
     textController.dispose();
+    renameController.dispose();
     super.dispose();
   }
 
@@ -79,6 +96,7 @@ class _JournalPageState extends State<JournalPage> {
   }
 
   _deleteNote(index) async {
+    Note backupCopy = notes[index];
     setState(() {
       notes.removeAt(index);
       if (notes.isEmpty) {
@@ -87,7 +105,18 @@ class _JournalPageState extends State<JournalPage> {
       currentNoteIndex = notes.length - 1;
       textController.text = notes[currentNoteIndex].text;
     });
-    _save();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('Note deleted forever'),
+      action: SnackBarAction(
+          label: "Undo",
+          onPressed: () {
+            setState(() {
+              notes.add(backupCopy);
+              currentNoteIndex = notes.length - 1;
+              textController.text = notes[currentNoteIndex].text;
+            });
+          }),
+    ));
   }
 
   TextStyle getStyle(double size) {
@@ -111,24 +140,6 @@ class _JournalPageState extends State<JournalPage> {
     return greetings[random.nextInt(greetings.length)];
   }
 
-  String getSliderLabel() {
-    String letter = "";
-
-    if (_currentSliderValue == 20.0) {
-      letter = "S";
-    } else if (_currentSliderValue == 35.0) {
-      letter = "M";
-    } else if (_currentSliderValue == 50.0) {
-      letter = "L";
-    } else if (_currentSliderValue == 65.0) {
-      letter = "XL";
-    } else {
-      letter = "XXL";
-    }
-
-    return letter;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,7 +152,8 @@ class _JournalPageState extends State<JournalPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Expanded(
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
                     child: IconButton(
                         onPressed: () =>
                             _scaffoldKey.currentState!.openDrawer(),
@@ -150,15 +162,20 @@ class _JournalPageState extends State<JournalPage> {
                   Expanded(
                     child: Text(
                       notes[currentNoteIndex].name,
-                      style: getStyle(30),
+                      style: getStyle(30).copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Expanded(
+                  IconButton(
+                      onPressed: notes[currentNoteIndex].text.isEmpty
+                          ? null
+                          : () => Share.share(notes[currentNoteIndex].text),
+                      icon: const Icon(Icons.ios_share)),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15.0),
                     child: IconButton(
-                        onPressed: () =>
-                            _scaffoldKey.currentState!.openEndDrawer(),
-                        icon: const Icon(Icons.settings)),
+                        onPressed: () => _deleteNote(currentNoteIndex),
+                        icon: const Icon(Icons.delete_outline)),
                   )
                 ],
               ),
@@ -177,32 +194,21 @@ class _JournalPageState extends State<JournalPage> {
                           Brightness.dark
                       ? Colors.white
                       : Colors.black,
-                  style: getStyle(_currentSliderValue),
+                  style: getStyle(30),
                   textAlign: TextAlign.center,
-                  onChanged: notes.isNotEmpty
-                      ? (text) {
-                          List<String> splittedString = text.split(" ");
-                          if (splittedString.length > 1) {
-                            setState(() {
-                              notes[currentNoteIndex].name =
-                                  '${splittedString[0]} ${splittedString[1]}';
-                              notes[currentNoteIndex].text = text;
-                            });
-                          } else {
-                            setState(() {
-                              notes[currentNoteIndex].text = text;
-                            });
-                          }
-                          _save();
-                        }
-                      : null,
+                  onSubmitted: (text) {
+                    setState(() {
+                      notes[currentNoteIndex].text = text;
+                    });
+                    _save();
+                  },
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: ElevatedButton(
                       onPressed: () {
                         _createNewNote();
@@ -218,7 +224,7 @@ class _JournalPageState extends State<JournalPage> {
                       ),
                       child: Icon(
                         Icons.add,
-                        size: 40,
+                        size: 60,
                         color: MediaQuery.of(context).platformBrightness ==
                                 Brightness.dark
                             ? Colors.black
@@ -273,28 +279,56 @@ class _JournalPageState extends State<JournalPage> {
                           final currentNote = notes[index];
                           return Dismissible(
                             key: UniqueKey(),
-                            background: Container(color: Colors.red),
+                            background: Container(
+                                color: Colors.red,
+                                child:
+                                    const Icon(Icons.delete_forever_outlined)),
                             onDismissed: (direction) {
                               // Remove the item from the data source.
                               setState(() {
                                 _deleteNote(index);
                               });
-
-                              // Then show a snackbar.
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Note dismissed')));
                             },
                             child: ListTile(
                               tileColor: currentNoteIndex == index
                                   ? Colors.grey
                                   : null,
-                              title: Text(currentNote.name,
-                                  style: TextStyle(
-                                      fontSize: 30,
-                                      color: currentNoteIndex == index
-                                          ? null
-                                          : Colors.grey)),
+                              title: TextField(
+                                onTap: () {
+                                  setState(() {
+                                    isRenameTextFieldEnabled = true;
+                                  });
+                                },
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(20)
+                                ],
+                                controller: renameController,
+                                enabled: currentNoteIndex == index
+                                    ? isRenameTextFieldEnabled
+                                    : false,
+                                showCursor: currentNoteIndex == index
+                                    ? isRenameTextFieldEnabled
+                                    : false,
+                                autofocus: currentNoteIndex == index
+                                    ? isRenameTextFieldEnabled
+                                    : false,
+                                onSubmitted: (value) {
+                                  setState(() {
+                                    currentNote.name = value;
+                                    isRenameTextFieldEnabled = false;
+                                  });
+                                  renameController.clear();
+                                  _save();
+                                },
+                                decoration: InputDecoration.collapsed(
+                                    hintStyle: TextStyle(
+                                        fontSize: 20,
+                                        color: currentNoteIndex == index
+                                            ? null
+                                            : Colors.grey),
+                                    hintText: currentNote.name,
+                                    border: InputBorder.none),
+                              ),
                               onTap: () {
                                 setState(() {
                                   currentNoteIndex = index;
@@ -303,56 +337,28 @@ class _JournalPageState extends State<JournalPage> {
                                     notes[currentNoteIndex].text;
                                 Navigator.pop(context);
                               },
+                              trailing: IconButton(
+                                  onPressed: currentNoteIndex == index
+                                      ? () {
+                                          setState(() {
+                                            isRenameTextFieldEnabled = true;
+                                          });
+                                        }
+                                      : null,
+                                  icon: const Icon(
+                                      Icons.drive_file_rename_outline)),
                             ),
                           );
-                        })
+                        }),
+                    InkWell(
+                      child: const Text(
+                        'Privacy Policy',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      onTap: () => _launchPrivacyPolicyUrl(),
+                    )
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
-      endDrawer: Theme(
-        data: Theme.of(context).copyWith(
-          // Set the transparency here
-          canvasColor: MediaQuery.of(context).platformBrightness ==
-                  Brightness.dark
-              ? Colors.white
-              : Colors
-                  .black, //or any other color you want. e.g Colors.blue.withOpacity(0.5)
-        ),
-        child: Drawer(
-          // Add a ListView to the drawer. This ensures the user can scroll
-          // through the options in the drawer if there isn't enough vertical
-          // space to fit everything.
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: const EdgeInsets.only(top: 50),
-            children: <Widget>[
-              DrawerHeader(
-                child: Text('Font Size',
-                    style: GoogleFonts.raleway(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 60,
-                            color: MediaQuery.of(context).platformBrightness !=
-                                    Brightness.dark
-                                ? Colors.white
-                                : Colors.black))),
-              ),
-              Slider(
-                value: _currentSliderValue,
-                max: 80,
-                min: 20,
-                divisions: 4,
-                label: getSliderLabel(),
-                onChanged: (double value) {
-                  setState(() {
-                    _currentSliderValue = value;
-                    _save();
-                  });
-                },
               )
             ],
           ),

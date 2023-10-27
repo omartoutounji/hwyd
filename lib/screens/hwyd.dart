@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -38,7 +40,9 @@ class _HwydState extends State<Hwyd> {
 
   @override
   Widget build(BuildContext context) {
-    return showOnboard == true ? _buildIntroductionScreen() : const JournalPage();
+    return showOnboard == true
+        ? _buildIntroductionScreen()
+        : const JournalPage();
   }
 
   Widget _buildIntroductionScreen() {
