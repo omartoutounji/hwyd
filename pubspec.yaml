@@ -1,7 +1,7 @@
 name: hwyd
 description: hwyd is the world's first nano journal. Simple. Focused. Beautiful. All you'll want to do is write your heart out.
 publish_to: 'none'
-version: 1.4.0+4
+version: 1.5.0+1
 
 environment:
   sdk: '>=3.1.4 <4.0.0'
