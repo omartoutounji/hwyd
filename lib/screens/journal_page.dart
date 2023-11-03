@@ -9,9 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../model/Note.dart';
+import 'package:hwyd/model/Note.dart';
 
 class JournalPage extends StatefulWidget {
   const JournalPage({super.key});
@@ -27,7 +26,6 @@ class _JournalPageState extends State<JournalPage> {
   final Image logo = Image.asset('assets/hwyd_logo.png', width: 50);
   final textController = TextEditingController();
   final renameController = TextEditingController();
-  double _currentSliderValue = 80;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isRenameTextFieldEnabled = false;
 
@@ -41,21 +39,112 @@ class _JournalPageState extends State<JournalPage> {
     greeting = getRandomGreeting();
   }
 
+  String getRandomEmoji() {
+    var emojis = [
+      "✌",
+      "😂",
+      "😝",
+      "😁",
+      "😱",
+      "👉",
+      "🙌",
+      "🍻",
+      "🔥",
+      "🌈",
+      "☀",
+      "🎈",
+      "🌹",
+      "💄",
+      "🎀",
+      "⚽",
+      "🎾",
+      "🏁",
+      "😡",
+      "👿",
+      "🐻",
+      "🐶",
+      "🐬",
+      "🐟",
+      "🍀",
+      "👀",
+      "🚗",
+      "🍎",
+      "💝",
+      "💙",
+      "👌",
+      "❤",
+      "😍",
+      "😉",
+      "😓",
+      "😳",
+      "💪",
+      "💩",
+      "🍸",
+      "🔑",
+      "💖",
+      "🌟",
+      "🎉",
+      "🌺",
+      "🎶",
+      "👠",
+      "🏈",
+      "⚾",
+      "🏆",
+      "👽",
+      "💀",
+      "🐵",
+      "🐮",
+      "🐩",
+      "🐎",
+      "💣",
+      "👃",
+      "👂",
+      "🍓",
+      "💘",
+      "💜",
+      "👊",
+      "💋",
+      "😘",
+      "😜",
+      "😵",
+      "🙏",
+      "👋",
+      "🚽",
+      "💃",
+      "💎",
+      "🚀",
+      "🌙",
+      "🎁",
+      "⛄",
+      "🌊",
+      "⛵",
+      "🏀",
+      "🎱",
+      "💰",
+      "👶",
+      "👸",
+      "🐰",
+      "🐷",
+      "🐍",
+      "🐫",
+      "🔫",
+      "👄",
+      "🚲",
+      "🍉",
+      "💛",
+      "💚"
+    ];
+    final random = Random();
+    return emojis[random.nextInt(emojis.length)];
+  }
+
   Note getNewNote() {
-    return Note(getPrettyDate(), "");
+    return Note("${getRandomEmoji()} ${getPrettyDate()}", "");
   }
 
   String getPrettyDate() {
     return formatDate(
         DateTime.now(), [M, ' ', d, ' at ', HH, ':', nn, '.', ss]);
-  }
-
-  Future<void> _launchPrivacyPolicyUrl() async {
-    Uri privacyPolicyUrl = Uri.parse(
-        'https://github.com/omartoutounji/hwyd/tree/master/privacy-policy/hwyd-app-privacy-policy.pdf');
-    if (!await launchUrl(privacyPolicyUrl)) {
-      throw Exception('Could not launch $privacyPolicyUrl');
-    }
   }
 
   _loadNotes() async {
@@ -66,7 +155,6 @@ class _JournalPageState extends State<JournalPage> {
               .map((i) => Note.fromJson(i)));
       currentNoteIndex = notes.length - 1;
       textController.text = notes[currentNoteIndex].text;
-      _currentSliderValue = prefs.getDouble('fontSize') ?? 80;
     });
   }
 
@@ -83,7 +171,6 @@ class _JournalPageState extends State<JournalPage> {
   _save() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('notes', json.encode(notes));
-    prefs.setDouble('fontSize', _currentSliderValue);
   }
 
   _createNewNote() async {
@@ -166,17 +253,14 @@ class _JournalPageState extends State<JournalPage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  IconButton(
-                      onPressed: notes[currentNoteIndex].text.isEmpty
-                          ? null
-                          : () => Share.share(notes[currentNoteIndex].text),
-                      icon: const Icon(Icons.ios_share)),
                   Padding(
                     padding: const EdgeInsets.only(right: 15.0),
                     child: IconButton(
-                        onPressed: () => _deleteNote(currentNoteIndex),
-                        icon: const Icon(Icons.delete_outline)),
-                  )
+                        onPressed: notes[currentNoteIndex].text.isEmpty
+                            ? null
+                            : () => Share.share(notes[currentNoteIndex].text),
+                        icon: const Icon(Icons.ios_share)),
+                  ),
                 ],
               ),
               Expanded(
@@ -256,7 +340,7 @@ class _JournalPageState extends State<JournalPage> {
             padding: const EdgeInsets.only(top: 50),
             children: <Widget>[
               DrawerHeader(
-                child: Text('Notes',
+                child: Text('Dresser',
                     style: GoogleFonts.raleway(
                         textStyle: TextStyle(
                             fontWeight: FontWeight.w400,
@@ -323,9 +407,11 @@ class _JournalPageState extends State<JournalPage> {
                                 decoration: InputDecoration.collapsed(
                                     hintStyle: TextStyle(
                                         fontSize: 20,
-                                        color: currentNoteIndex == index
-                                            ? null
-                                            : Colors.grey),
+                                        color: MediaQuery.of(context)
+                                                    .platformBrightness !=
+                                                Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black),
                                     hintText: currentNote.name,
                                     border: InputBorder.none),
                               ),
@@ -350,13 +436,6 @@ class _JournalPageState extends State<JournalPage> {
                             ),
                           );
                         }),
-                    InkWell(
-                      child: const Text(
-                        'Privacy Policy',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      onTap: () => _launchPrivacyPolicyUrl(),
-                    )
                   ],
                 ),
               )
