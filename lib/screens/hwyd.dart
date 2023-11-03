@@ -30,8 +30,8 @@ class _HwydState extends State<Hwyd> {
   _checkOnboardStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      showOnboard = true;
-      // jsonDecode(prefs.getString(_onBoardKey) ?? json.encode(true));
+      showOnboard =
+          jsonDecode(prefs.getString(_onBoardKey) ?? json.encode(true));
     });
   }
 
@@ -58,7 +58,7 @@ class _HwydState extends State<Hwyd> {
   Widget _buildIntroductionScreen() {
     return CupertinoOnboarding(
         onPressedOnLastPage: () {
-          // _disableOnboard();
+          _disableOnboard();
           Navigator.pushReplacementNamed(context, '/journal');
         },
         widgetAboveBottomButton: CupertinoButton(
