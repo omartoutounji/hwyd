@@ -1,4 +1,4 @@
-# Welcome to hwyd, a journal that doesn't just meet your needs — it anticipates them. Available on the App Store and Google Play store. Download now.
+# Welcome to hwyd, a journal that doesn't just meet your needs — it anticipates them.
 
 ## The comfort of privacy
 hwyd is built from the ground up to be private and secure. We don't know what journals you enter or what you type. Heck, we don't — and Will never know a damn thing about you! Don't believe us? Check out our privacy policy below.
