@@ -1,11 +1,10 @@
-The world's first nano journal.
- Simple.
- Focused.
- Beautiful.
- All you'll want to do is write your heart out.
+# Welcome to hwyd, a journal that doesn't just meet your needs — it anticipates them. Available on the App Store and Google Play store. Download now.
 
- [![name](https://github.com/omartoutounji/hwyd/blob/master/assets/app%20store.svg)](https://apps.apple.com/ca/app/hwyd-privacy-first-journaling/id1557807577)
+## The comfort of privacy
+hwyd is built from the ground up to be private and secure. We don't know what journals you enter or what you type. Heck, we don't — and Will never know a damn thing about you! Don't believe us? Check out our privacy policy below.
 
- [![name](https://github.com/omartoutounji/hwyd/blob/master/assets/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.app.hwyd)
+## Clean and calm
+Clean and calm, hwyd shapes itself to how you use it. It's a journal that doesn't just meet your needs — it anticipates them.
 
- [![name](https://github.com/omartoutounji/hwyd/blob/master/assets/hwyd_ipad_iphone.svg)](https://apps.apple.com/ca/app/hwyd-privacy-first-journaling/id1557807577)
+## Space for the different sides of you
+Effortlessly organize everything you journal — work, study, hobbies — all in one place with Dresser.
