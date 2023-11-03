@@ -13,15 +13,16 @@ dependencies:
   google_fonts: ^6.1.0
   shared_preferences: ^2.0.5
   date_format: ^2.0.2
-  introduction_screen: ^3.1.12
   file: ^6.1.4
   share_plus: ^7.2.1
   url_launcher: ^6.2.1
+  cupertino_onboarding: ^1.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  test: ^1.24.3
 
 flutter:
   assets:
