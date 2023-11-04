@@ -204,6 +204,7 @@ class _JournalPageState extends State<JournalPage> {
             });
           }),
     ));
+    _save();
   }
 
   TextStyle getStyle(double size) {
@@ -257,7 +258,7 @@ class _JournalPageState extends State<JournalPage> {
                     padding: const EdgeInsets.only(right: 15.0),
                     child: IconButton(
                         onPressed: notes[currentNoteIndex].text.isEmpty
-                            ? null
+                            ? () => Share.share(greeting)
                             : () => Share.share(notes[currentNoteIndex].text),
                         icon: const Icon(Icons.ios_share)),
                   ),
@@ -367,12 +368,7 @@ class _JournalPageState extends State<JournalPage> {
                                 color: Colors.red,
                                 child:
                                     const Icon(Icons.delete_forever_outlined)),
-                            onDismissed: (direction) {
-                              // Remove the item from the data source.
-                              setState(() {
-                                _deleteNote(index);
-                              });
-                            },
+                            onDismissed: (direction) => _deleteNote(index),
                             child: ListTile(
                               tileColor: currentNoteIndex == index
                                   ? Colors.grey
