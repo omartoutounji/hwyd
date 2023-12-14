@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hwyd/screens/journal_page.dart';
-import 'package:share_plus/share_plus.dart';
 
 void main() {
   testWidgets('Hwyd sanity test', (WidgetTester tester) async {
