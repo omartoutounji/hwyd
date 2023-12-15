@@ -48,8 +48,8 @@ class _HwydState extends State<Hwyd> {
   }
 
   Future<void> _launchPrivacyPolicyUrl() async {
-    Uri privacyPolicyUrl =
-        Uri.parse('https://github.com/omartoutounji/hwyd/wiki/Privacy-Policy');
+    Uri privacyPolicyUrl = Uri.parse(
+        'https://github.com/omartoutounji/hwyd/wiki/HWYD-Privacy-Policy');
     if (!await launchUrl(privacyPolicyUrl)) {
       throw Exception('Could not launch $privacyPolicyUrl');
     }
